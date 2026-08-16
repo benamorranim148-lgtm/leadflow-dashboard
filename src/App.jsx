@@ -70,6 +70,23 @@ export default function App() {
       body: 'A client has requested dashboard access. Review purchase status and import leads to approve.',
       type: 'warning',
     })
+
+    try {
+      const message = encodeURIComponent("Bonjour, je souhaite avoir accès à mon dashboard LeadFlow.")
+      // Open WhatsApp chat (replace number with your agency number)
+      const waNumber = '54125423'
+      const waUrl = `https://wa.me/${waNumber}?text=${message}`
+      window.open(waUrl, '_blank')
+
+      // Also open an email client as a fallback / complementary channel
+      const mailTo = 'support@leadflow.tn'
+      const subject = encodeURIComponent('Demandé: accès au dashboard LeadFlow')
+      const mailUrl = `mailto:${mailTo}?subject=${subject}&body=${message}`
+      window.open(mailUrl, '_blank')
+    } catch (e) {
+      // ignore errors from popup blockers
+      console.warn('Could not open external contact links', e)
+    }
   }
 
   function markNotificationRead(id) {
@@ -90,6 +107,19 @@ export default function App() {
       title: 'Dashboard access approved',
       body: 'Admin approved the client and dashboard access is now enabled.',
       type: 'success',
+    })
+  }
+
+  function declineDashboardAccess() {
+    setSettings((prev) => ({
+      ...prev,
+      dashboardAccess: false,
+      accessRequested: false,
+    }))
+    addNotification({
+      title: 'Dashboard access declined',
+      body: 'Admin declined the client request for dashboard access.',
+      type: 'warning',
     })
   }
 
@@ -284,13 +314,22 @@ export default function App() {
                 <p className="font-semibold text-paper">Client dashboard access requested</p>
                 <p className="mt-1 text-sm text-paper/70">A client has asked for access. Import leads and approve the request to unlock the dashboard.</p>
               </div>
-              <button
-                type="button"
-                onClick={approveDashboardAccess}
-                className="rounded-2xl bg-signal px-4 py-3 text-sm font-semibold text-blue-950 hover:bg-signal/90 transition-colors"
-              >
-                Approve access
-              </button>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={approveDashboardAccess}
+                  className="rounded-2xl bg-signal px-4 py-3 text-sm font-semibold text-blue-950 hover:bg-signal/90 transition-colors"
+                >
+                  Approve access
+                </button>
+                <button
+                  type="button"
+                  onClick={declineDashboardAccess}
+                  className="rounded-2xl border border-line px-4 py-3 text-sm text-paper hover:border-red-400 hover:text-red-300 transition-colors"
+                >
+                  Decline access
+                </button>
+              </div>
             </div>
           </div>
         )}
