@@ -1,6 +1,6 @@
-import { Home, Users, Star, Send, BarChart3, Settings } from 'lucide-react'
+import { Home, Users, Star, Send, BarChart3, Settings, Crown } from 'lucide-react'
 
-const NAV_ITEMS = [
+const BASE_NAV = [
   { icon: Home, label: 'Dashboard', active: true },
   { icon: Users, label: 'Leads' },
   { icon: Star, label: 'Qualified Leads' },
@@ -27,7 +27,11 @@ function Logo() {
   )
 }
 
-export default function Sidebar({ active, onNavigate }) {
+export default function Sidebar({ active, onNavigate, role }) {
+  const NAV_ITEMS = [...BASE_NAV]
+  if (role === 'admin') {
+    NAV_ITEMS.push({ icon: Crown, label: 'Admin' })
+  }
   return (
     <aside className="w-64 shrink-0 border-r border-line bg-blue-950 flex flex-col h-screen sticky top-0">
       <div className="px-6 pt-8 pb-6 flex flex-col items-center text-center">
