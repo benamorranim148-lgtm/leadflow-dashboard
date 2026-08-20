@@ -20,7 +20,7 @@ function ScoreBadge({ score }) {
   )
 }
 
-export default function LeadsTable({ leads, statuses, onStatusChange, role, onLeadUpdate }) {
+export default function LeadsTable({ leads, statuses, onStatusChange, role, onLeadUpdate, readOnly = false }) {
   const [search, setSearch] = useState('')
 
   const filtered = useMemo(() => {
@@ -84,7 +84,7 @@ export default function LeadsTable({ leads, statuses, onStatusChange, role, onLe
                     )}
                   </td>
                   <td className="px-4 py-4 align-top text-paper/60">
-                    {role === 'admin' ? (
+                    {role === 'admin' && !readOnly ? (
                       <input
                         type="text"
                         value={lead.phone || ''}
@@ -100,6 +100,7 @@ export default function LeadsTable({ leads, statuses, onStatusChange, role, onLe
                     <select
                       value={statuses[lead.id] || 'New'}
                       onChange={(e) => onStatusChange(lead.id, e.target.value)}
+                      disabled={readOnly}
                       className={`text-xs rounded-md px-2.5 py-1 focus:outline-none ${STATUS_STYLES[statuses[lead.id] || 'New']}`}
                     >
                       {STATUS_OPTIONS.map((s) => (
@@ -108,7 +109,7 @@ export default function LeadsTable({ leads, statuses, onStatusChange, role, onLe
                     </select>
                   </td>
                   <td className="px-4 py-4 align-top">
-                    <button className="text-paper/40 hover:text-paper">
+                    <button className="text-paper/40 hover:text-paper" disabled={readOnly}>
                       <MoreVertical size={16} />
                     </button>
                   </td>

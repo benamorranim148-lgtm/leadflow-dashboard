@@ -20,7 +20,7 @@ function NotificationItem({ notification, onRead }) {
   )
 }
 
-export default function Header({ dateRange = 'Live data', onImport, onClearLeads, role = 'admin', onRoleChange, notifications = [], unreadCount = 0, onMarkRead, onMarkAllRead }) {
+export default function Header({ dateRange = 'Live data', onImport, onClearLeads, onExport, notifications = [], unreadCount = 0, onMarkRead, onMarkAllRead, role, clients = [], selectedClientId, onSelectClient }) {
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
   const fileInputRef = useRef(null)
@@ -30,20 +30,6 @@ export default function Header({ dateRange = 'Live data', onImport, onClearLeads
     const file = e.target.files[0]
     if (file && onImport) onImport(file)
     e.target.value = '' // allow re-importing the same file name again later
-  }
-
-  function handleRoleChange(value) {
-    if (value === 'admin') {
-      const password = window.prompt('Enter admin password to access admin features:')
-      if (password === 'AdminAgency2026') {
-        onRoleChange?.(value)
-      } else {
-        window.alert('Incorrect admin password.')
-      }
-      return
-    }
-
-    onRoleChange?.(value)
   }
 
   return (
@@ -56,23 +42,24 @@ export default function Header({ dateRange = 'Live data', onImport, onClearLeads
       </div>
 
       <div className="flex items-center gap-3">
-        <select
-          value={role}
-          onChange={(e) => handleRoleChange(e.target.value)}
-          className="rounded-2xl border border-line bg-blue-950 px-4 py-2.5 text-sm text-paper outline-none"
+        <button
+          onClick={onClearLeads}
+          className="rounded-2xl border border-line px-4 py-2.5 text-sm text-paper hover:border-signal hover:text-paper transition-colors"
         >
-          <option value="admin">Admin</option>
-          <option value="client">Client</option>
-        </select>
-
+          Clear leads
+        </button>
         {role === 'admin' && (
-          <>
-            <button
-              onClick={onClearLeads}
-              className="rounded-2xl border border-line px-4 py-2.5 text-sm text-paper hover:border-signal hover:text-paper transition-colors"
+          <div className="flex items-center gap-2">
+            <select
+              value={selectedClientId || ''}
+              onChange={(e) => onSelectClient?.(e.target.value)}
+              className="rounded-md bg-blue-950 border border-line px-3 py-2 text-sm"
             >
-              Clear leads
-            </button>
+              <option value="">Assign to client...</option>
+              {clients.map((c) => (
+                <option key={c.id} value={c.id}>{c.businessName || c.email}</option>
+              ))}
+            </select>
             <button
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center gap-2 bg-signal text-blue-950 font-medium rounded-lg px-4 py-2.5 text-sm hover:bg-signal/90 transition-colors"
@@ -80,9 +67,25 @@ export default function Header({ dateRange = 'Live data', onImport, onClearLeads
               <Upload size={16} />
               Import leads.csv
             </button>
-            <input ref={fileInputRef} type="file" accept=".csv" onChange={handleFileChange} className="hidden" />
-          </>
+          </div>
         )}
+        {role !== 'admin' && (
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-2 bg-signal text-blue-950 font-medium rounded-lg px-4 py-2.5 text-sm hover:bg-signal/90 transition-colors"
+          >
+            <Upload size={16} />
+            Import leads.csv
+          </button>
+        )}
+        <input ref={fileInputRef} type="file" accept=".csv" onChange={handleFileChange} className="hidden" />
+
+        <button
+          onClick={() => onExport?.()}
+          className="rounded-2xl border border-line px-4 py-2.5 text-sm text-paper hover:border-signal hover:text-paper transition-colors"
+        >
+          Export CSV
+        </button>
 
         <button className="flex items-center gap-2 border border-line rounded-lg px-4 py-2.5 text-sm hover:border-signal/40 transition-colors">
           <Calendar size={16} className="text-paper/60" />

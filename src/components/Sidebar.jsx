@@ -1,13 +1,16 @@
-import { Home, Users, Star, Send, BarChart3, Settings, Crown } from 'lucide-react'
+import { Home, Users, Star, Send, BarChart3, Settings, Crown, UserCog } from 'lucide-react'
 
 const BASE_NAV = [
-  { icon: Home, label: 'Dashboard', active: true },
+  { icon: Home, label: 'Dashboard' },
   { icon: Users, label: 'Leads' },
   { icon: Star, label: 'Qualified Leads' },
   { icon: Send, label: 'Outreach' },
   { icon: BarChart3, label: 'Analytics' },
   { icon: Settings, label: 'Settings' },
 ]
+
+// icon fallback for any extra item that doesn't specify its own icon
+const DEFAULT_EXTRA_ICON = UserCog
 
 function Logo() {
   return (
@@ -27,11 +30,15 @@ function Logo() {
   )
 }
 
-export default function Sidebar({ active, onNavigate, role }) {
-  const NAV_ITEMS = [...BASE_NAV]
-  if (role === 'admin') {
-    NAV_ITEMS.push({ icon: Crown, label: 'Admin' })
-  }
+export default function Sidebar({ active, onNavigate, extraItems = [] }) {
+  const NAV_ITEMS = [
+    ...BASE_NAV,
+    ...extraItems.map((item) => ({
+      icon: item.icon || DEFAULT_EXTRA_ICON,
+      label: item.label,
+    })),
+  ]
+
   return (
     <aside className="w-64 shrink-0 border-r border-line bg-blue-950 flex flex-col h-screen sticky top-0">
       <div className="px-6 pt-8 pb-6 flex flex-col items-center text-center">
