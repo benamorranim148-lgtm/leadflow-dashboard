@@ -8,7 +8,7 @@
   "build": "vite build",
   "preview": "vite preview",
   "vercel-build": "chmod +x node_modules/.bin/* && vite build"
-  },
+  
   },
   "dependencies": {
     "firebase": "^12.17.1",
