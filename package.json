@@ -4,9 +4,11 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview",
+  "vercel-build": "chmod +x node_modules/.bin/* && vite build"
+  },
   },
   "dependencies": {
     "firebase": "^12.17.1",
@@ -23,4 +25,5 @@
     "tailwindcss": "^3.4.15",
     "vite": "^5.4.11"
   }
+
 }
